@@ -47,6 +47,7 @@ func (ps *playerSorter) Less(i, j int) bool {
 }
 
 //Column Sorts
+/*
 func sortByIncreasingAge(player1, player2 *Player) bool {
 	return player1.Age < player2.Age
 }
@@ -58,3 +59,4 @@ func sortByDecreasingAge(player1, player2 *Player) bool {
 func sortByDecreasingAtBats(player1, player2 *Player) bool {
 	return player1.AtBats > player2.AtBats
 }
+*/

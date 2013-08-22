@@ -8,11 +8,11 @@ import (
 )
 
 func fetchPlayers() (players []*Player) {
-	htmlPath := "2013-05-15-18-16-23.html"
+	htmlPath := "2013-08-21-21-03-45.html"
 
 	file, err := os.Open(htmlPath)
 	if err != nil {
-		log.Fatalln("Could not open the file")
+		log.Fatalln("Could not open the roster file")
 	}
 
 	defer func(file *os.File) {
@@ -49,11 +49,15 @@ func pullTogetherPlayer(node *html.Node, players []*Player) (returnPlayers []*Pl
 			case 6:
 				player.Name = column.FirstChild.Data
 			case 12:
-				player.Age = fetchInteger(column.FirstChild)
+				player.Level = column.FirstChild.Data
 			case 14:
-				player.Bats = column.FirstChild.Data
+				player.Age = fetchInteger(column.FirstChild)
 			case 16:
-				player.Experience = fetchInteger(column.FirstChild)
+				player.Bats = column.FirstChild.Data
+			case 18:
+				player.Overall = column.FirstChild.Data
+			case 20:
+				player.Potential = column.FirstChild.Data
 			case 22:
 				player.Contact = fetchInteger(column.FirstChild)
 			case 24:
@@ -63,7 +67,7 @@ func pullTogetherPlayer(node *html.Node, players []*Player) (returnPlayers []*Pl
 			case 28:
 				player.Eye = fetchInteger(column.FirstChild)
 			case 30:
-				player.Strikeout = fetchInteger(column.FirstChild)
+				player.AvoidsStrikeOuts = fetchInteger(column.FirstChild)
 			case 32:
 				player.Catcher = fetchInteger(column.FirstChild)
 			case 34:
@@ -81,15 +85,31 @@ func pullTogetherPlayer(node *html.Node, players []*Player) (returnPlayers []*Pl
 			case 46:
 				player.RightField = fetchInteger(column.FirstChild)
 			case 48:
-				player.AtBats = fetchInteger(column.FirstChild)
+				player.Speed = fetchInteger(column.FirstChild)
 			case 50:
-				player.OnBase = fetchFloat(column.FirstChild)
+				player.Stealing = fetchInteger(column.FirstChild)
 			case 52:
-				player.Slugging = fetchFloat(column.FirstChild)
+				player.BaseRunning = fetchInteger(column.FirstChild)
 			case 54:
-				player.Ops = fetchFloat(column.FirstChild)
+				player.AB = fetchInteger(column.FirstChild)
 			case 56:
-				player.OpsPlus = fetchInteger(column.FirstChild)
+				player.HR = fetchInteger(column.FirstChild)
+			case 58:
+				player.AVG = fetchFloat(column.FirstChild)
+			case 60:
+				player.OBP = fetchFloat(column.FirstChild)
+			case 62:
+				player.SLG = fetchFloat(column.FirstChild)
+			case 64:
+				player.WOBA = fetchFloat(column.FirstChild)
+			case 66:
+				player.OPSPlus = fetchInteger(column.FirstChild)
+			case 68:
+				player.VORP = fetchFloat(column.FirstChild)
+			case 70:
+				player.WAR = fetchFloat(column.FirstChild)
+			case 72:
+				player.ZR = fetchFloat(column.FirstChild)
 			}
 		}
 		iterator++
