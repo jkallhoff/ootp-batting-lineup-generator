@@ -7,8 +7,8 @@ import (
 	"strconv"
 )
 
-func fetchPlayers() (players []*Player) {
-	htmlPath := "2013-08-21-21-03-45.html"
+func fetchPlayers(fileName string) (players PlayersList) {
+	htmlPath := fileName
 
 	file, err := os.Open(htmlPath)
 	if err != nil {
@@ -27,7 +27,7 @@ func fetchPlayers() (players []*Player) {
 	return
 }
 
-func processNode(node *html.Node, players []*Player) (returnPlayers []*Player) {
+func processNode(node *html.Node, players PlayersList) (returnPlayers PlayersList) {
 	if node.Type == html.ElementNode && node.Data == "tr" {
 		players = pullTogetherPlayer(node, players)
 	}
@@ -37,7 +37,7 @@ func processNode(node *html.Node, players []*Player) (returnPlayers []*Player) {
 	return players
 }
 
-func pullTogetherPlayer(node *html.Node, players []*Player) (returnPlayers []*Player) {
+func pullTogetherPlayer(node *html.Node, players PlayersList) (returnPlayers PlayersList) {
 	player := new(Player)
 
 	iterator := 1
@@ -55,9 +55,12 @@ func pullTogetherPlayer(node *html.Node, players []*Player) (returnPlayers []*Pl
 			case 16:
 				player.Bats = column.FirstChild.Data
 			case 18:
-				player.Overall = column.FirstChild.Data
+				overall := column.FirstChild.Data
+				player.Overall, _ = strconv.ParseInt(overall[:1], 10, 8)
 			case 20:
-				player.Potential = column.FirstChild.Data
+				potential := column.FirstChild.Data
+				player.Potential, _ = strconv.ParseInt(potential[:1], 10, 8)
+				//log.Printf("%d", player.Potential)
 			case 22:
 				player.Contact = fetchInteger(column.FirstChild)
 			case 24:
@@ -123,7 +126,7 @@ func pullTogetherPlayer(node *html.Node, players []*Player) (returnPlayers []*Pl
 }
 
 func fetchInteger(node *html.Node) (num int64) {
-	num, _ = strconv.ParseInt(node.Data, 10, 8)
+	num, _ = strconv.ParseInt(node.Data, 10, 16)
 	return
 }
 

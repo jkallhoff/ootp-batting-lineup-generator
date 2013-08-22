@@ -1,0 +1,11 @@
+{
+	"leagueLevel":"A",
+	"minAtBats":160, 
+	"maxAge":25, 
+	"minStars":2,
+	"medianwOBP":0.300,
+	"bottomwOBP":0.280,
+	"topwOBP":0.340, 
+	"minWAR": -0.5, 
+	"goodWAR": 1.5
+}
