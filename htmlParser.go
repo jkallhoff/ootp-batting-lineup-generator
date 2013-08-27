@@ -5,10 +5,14 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
-func fetchPlayers(fileName string) (players PlayersList) {
-	htmlPath := fileName
+var leagueBeingProcessed string
+
+func loadSamples(league string) {
+	htmlPath := "Exports/" + league + ".html"
+	leagueBeingProcessed = league
 
 	file, err := os.Open(htmlPath)
 	if err != nil {
@@ -22,32 +26,43 @@ func fetchPlayers(fileName string) (players PlayersList) {
 	}(file)
 
 	node, _ := html.Parse(file)
-	players = processNode(node, players)
+	processNode(node)
 
 	return
 }
 
-func processNode(node *html.Node, players PlayersList) (returnPlayers PlayersList) {
+func processNode(node *html.Node) {
 	if node.Type == html.ElementNode && node.Data == "tr" {
-		players = pullTogetherPlayer(node, players)
+		pullTogetherSample(node)
 	}
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		players = processNode(child, players)
+		processNode(child)
 	}
-	return players
 }
 
-func pullTogetherPlayer(node *html.Node, players PlayersList) (returnPlayers PlayersList) {
+func pullTogetherSample(node *html.Node) {
+	positionHolder := ""
 	player := new(Player)
-
+	sample := new(LeagueSample)
 	iterator := 1
 	for column := node.FirstChild; column != nil; column = column.NextSibling {
 		if column.FirstChild != nil {
 			switch iterator {
 			case 4:
-				player.Position = column.FirstChild.Data
+				positionHolder = column.FirstChild.Data
 			case 6:
-				player.Name = column.FirstChild.Data
+				name := strings.TrimSpace(column.FirstChild.Data)
+				if name == "" || name == "Name" {
+					break
+				}
+
+				if _, ok := Players[name]; ok {
+					player = Players[name]
+				} else {
+					player = &Player{Name: name}
+					Players[name] = player
+				}
+				player.Position = positionHolder
 			case 12:
 				player.Level = column.FirstChild.Data
 			case 14:
@@ -94,35 +109,34 @@ func pullTogetherPlayer(node *html.Node, players PlayersList) (returnPlayers Pla
 			case 52:
 				player.BaseRunning = fetchInteger(column.FirstChild)
 			case 54:
-				player.AB = fetchInteger(column.FirstChild)
+				sample.AB = fetchInteger(column.FirstChild)
 			case 56:
-				player.HR = fetchInteger(column.FirstChild)
+				sample.HR = fetchInteger(column.FirstChild)
 			case 58:
-				player.AVG = fetchFloat(column.FirstChild)
+				sample.AVG = fetchFloat(column.FirstChild)
 			case 60:
-				player.OBP = fetchFloat(column.FirstChild)
+				sample.OBP = fetchFloat(column.FirstChild)
 			case 62:
-				player.SLG = fetchFloat(column.FirstChild)
+				sample.SLG = fetchFloat(column.FirstChild)
 			case 64:
-				player.WOBA = fetchFloat(column.FirstChild)
+				sample.WOBA = fetchFloat(column.FirstChild)
 			case 66:
-				player.OPSPlus = fetchInteger(column.FirstChild)
+				sample.OPSPlus = fetchInteger(column.FirstChild)
 			case 68:
-				player.VORP = fetchFloat(column.FirstChild)
+				sample.VORP = fetchFloat(column.FirstChild)
 			case 70:
-				player.WAR = fetchFloat(column.FirstChild)
+				sample.WAR = fetchFloat(column.FirstChild)
 			case 72:
-				player.ZR = fetchFloat(column.FirstChild)
+				sample.ZR = fetchFloat(column.FirstChild)
 			}
 		}
 		iterator++
 	}
 
 	if player.Name != "" && player.Name != "Name" {
-		players = append(players, player)
+		sample.League = leagueBeingProcessed
+		player.Samples = append(player.Samples, sample)
 	}
-
-	return players
 }
 
 func fetchInteger(node *html.Node) (num int64) {

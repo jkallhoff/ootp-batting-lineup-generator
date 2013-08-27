@@ -1,13 +1,13 @@
 package main
 
-import (
+/*import (
 	"sort"
 )
 
 type playerLessFunc func(player1, player2 *Player) bool
 
 type playerSorter struct {
-	players     []*Player
+	players     map[string]*Player
 	sortMethods []playerLessFunc
 }
 
@@ -15,7 +15,7 @@ func (sorter *playerSorter) Sort() {
 	sort.Sort(sorter)
 }
 
-func OrderedBy(players []*Player, sortMethods ...playerLessFunc) *playerSorter {
+func OrderedBy(players map[string]*Player, sortMethods ...playerLessFunc) *playerSorter {
 	return &playerSorter{
 		players:     players,
 		sortMethods: sortMethods,
@@ -47,7 +47,7 @@ func (ps *playerSorter) Less(i, j int) bool {
 }
 
 //Column Sorts
-/*
+
 func sortByIncreasingAge(player1, player2 *Player) bool {
 	return player1.Age < player2.Age
 }
@@ -56,7 +56,6 @@ func sortByDecreasingAge(player1, player2 *Player) bool {
 	return player1.Age > player2.Age
 }
 
-func sortByDecreasingAtBats(player1, player2 *Player) bool {
-	return player1.AtBats > player2.AtBats
-}
-*/
+func sortByIncreasingName(player1, player2 *Player) bool {
+	return player1.Name < player2.Name
+}*/
