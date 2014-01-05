@@ -65,6 +65,7 @@ func pullTogetherSample(node *html.Node) {
 				player.Position = positionHolder
 			case 12:
 				player.Level = column.FirstChild.Data
+				player.LeagueInt = fetchLeagueInt(player.Level)
 			case 14:
 				player.Age = fetchInteger(column.FirstChild)
 			case 16:
@@ -135,8 +136,27 @@ func pullTogetherSample(node *html.Node) {
 
 	if player.Name != "" && player.Name != "Name" {
 		sample.League = leagueBeingProcessed
+		sample.LeagueInt = fetchLeagueInt(sample.League)
 		player.Samples = append(player.Samples, sample)
 	}
+}
+
+func fetchLeagueInt(league string) int64 {
+	switch league {
+	case "A":
+		return 0
+		break
+	case "AA":
+		return 1
+		break
+	case "AAA":
+		return 2
+		break
+	case "ML":
+		return 3
+		break
+	}
+	return -1
 }
 
 func fetchInteger(node *html.Node) (num int64) {
